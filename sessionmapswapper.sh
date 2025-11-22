@@ -5,7 +5,7 @@ exec 2> /dev/null
 # Bash script for swapping custom maps in Session: Skate Sim
 # Requires the game to be patched with unreal mod unlocker from https://illusory.dev/
 
-# Copyright (C) 2024 Imhsan
+# Copyright (C) 2024-2025 Imhsan
 # This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 # This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
@@ -21,7 +21,7 @@ sms_session_content_path="${SESSIONPATH}/SessionGame/Content"
 
 # Lists all the custom maps found
 sms_list() {
-    maps=$(find "${sms_session_content_path}/CustomMaps/" -name *.umap)
+    maps=$(find "${sms_session_content_path}/CustomMaps/" -name "*.umap")
 
     if [ -z "${maps}" ]; then
         printf "Could not find any maps in %s/CustomMaps/ ...\n" ${sms_session_content_path}
@@ -30,7 +30,7 @@ sms_list() {
 
     for map in ${maps}; do
         count=$((count + 1))
-        list="${list}$(basename "${map}" .umap) "
+        list="${list}$(basename "${map}" ".umap") "
     done
 
     list=$(printf "%s\n" ${list} | sort)
@@ -54,7 +54,7 @@ sms_unload() {
 
 # Loads a custom map, takes a mapname
 sms_load() {
-    map=$(find "${sms_session_content_path}/CustomMaps/" -name "${1}".umap)
+    map=$(find "${sms_session_content_path}/CustomMaps/" -name "${1}.umap")
 
     if [ -z "${map}" ]; then
         printf "Could not find map %s in %s/CustomMaps/ ...\n" ${1} ${sms_session_content_path}
@@ -75,7 +75,7 @@ sms_load() {
 
 # Displays a dialog prompting the user for a map to load
 sms_dialog() {
-    maps=$(find "${sms_session_content_path}/CustomMaps/" -name *.umap)
+    maps=$(find "${sms_session_content_path}/CustomMaps/" -name "*.umap")
 
     if [ -z "${maps}" ]; then
         zenity --info --title="Session Map Swapper" --text="Could not find any maps ..."
@@ -83,7 +83,7 @@ sms_dialog() {
     fi
 
     for map in ${maps}; do
-        list="${list}$(basename "${map}" .umap) "
+        list="${list}$(basename "${map}" ".umap") "
     done
 
     list=$(printf "%s\n" ${list} | sort)
@@ -116,7 +116,7 @@ sms_usage() {
 }
 
 # Main
-if [ ! ${1} ]; then
+if [ ! "${1}" ]; then
     sms_usage
 fi
 
@@ -145,5 +145,10 @@ while getopts ":hlm:rz" option; do
             ;;
     esac
 done
+
+shift $((OPTIND - 1))
+if [ $# -gt 0 ]; then
+    sms_usage
+fi
 
 exit 0
